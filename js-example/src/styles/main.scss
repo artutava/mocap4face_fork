@@ -6,6 +6,8 @@ $font-mono: "JetBrains Mono", monospace;
 $black-8: rgba(0, 0, 0, 0.8);
 $black-3: rgba(0, 0, 0, 0.3);
 $black-1: rgba(0, 0, 0, 0.1);
+$black-full: rgb(49, 49, 49);
+$black-box: rgb(58, 58, 58);
 $black-05: rgba(0, 0, 0, 0.05);
 $white-8: rgba(255, 255, 255, 0.8);
 $white-3: rgba(255, 255, 255, 0.3);
@@ -14,7 +16,7 @@ $white-05: rgba(255, 255, 255, 0.05);
 $white: #ffffff;
 $snow: #f7f7f7;
 $charcoal: #2e2e33;
-$turquoise: #00ffcc;
+$orange: #ff7729;
 $blue: #0073FF;
 
 $breakpoint-small: 32em; // 640px
@@ -68,10 +70,10 @@ body {
   font-family: $font-sans;
   letter-spacing: calc(-0.03058em + 0.44638px);
   color: $black-8;
-  background: $turquoise;
+  background: $orange;
 
   @media only screen and (min-width: $breakpoint-medium) {
-    border-top: 0.25rem solid $turquoise;
+    border-top: 0.25rem solid $orange;
   }
 }
 
@@ -179,7 +181,7 @@ small {
 }
 
 .main {
-  background: $white;
+  background: $black-full;
 }
 
 .row,
@@ -252,7 +254,7 @@ small {
 }
 
 .button {
-  background: $turquoise;
+  background: $orange;
   color: $black-8;
   font-weight: bold;
   cursor: pointer;
@@ -356,6 +358,15 @@ small {
 
   .title {
     flex-direction: column;
+    
+  }
+
+  .title h1{
+    color: $white
+  }
+
+  .title h3 {
+    color: $white
   }
 
   .description {
@@ -376,13 +387,13 @@ small {
   overflow: hidden;
   transform: translateZ(0); // Safari border radius hack
   margin: 4rem 0 2rem 0;
-  background: $white;
-  color: $black-8;
+  background: $black-box;
+  color: $white;
   padding: 0;
   box-shadow: $shadow;
 
   @media only screen and (min-width: $breakpoint-medium) {
-    border-radius: 2rem;
+    border-radius: 1rem;
     margin: 4rem 0;
   }
 
@@ -553,7 +564,7 @@ small {
 
         .value {
           height: 0.25rem;
-          background: $turquoise;
+          background: $orange;
           position: relative;
           border-radius: 0.25rem;
           position: relative;
@@ -569,7 +580,7 @@ small {
           top: 50%;
           right: 0;
           transform: translateY(-50%);
-          background: $snow;
+          background: $black-full;
           z-index: 0;
         }
       }
@@ -729,7 +740,7 @@ small {
   font-family: $font-mono;
 
   @media only screen and (min-width: $breakpoint-medium) {
-    border-bottom: 0.25rem solid $turquoise;
+    border-bottom: 0.25rem solid $orange;
   }
 
   ul {
@@ -910,4 +921,53 @@ small {
 
 .hidden {
   display: none !important;
+}
+
+/* scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+  
+}
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  
+}
+
+::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.3);
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+}
+
+::-webkit-scrollbar-thumb:window-inactive {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+
+.extra-buttons {
+  position: absolute;
+  bottom: 2rem;
+}
+
+.record-button-round {
+  width:16px;
+  height:16px;
+  background:#cc1616;
+  border-radius: 100px;
+  -webkit-border-radius: 100px ;
+  transition:0.6s
+}
+
+.record-button-active {
+  width:16px;
+  height:16px;
+  background:#cc1616;
+  border-radius: 0px;
+  -webkit-border-radius: 0px ;
+  transition:0.6s
 }
