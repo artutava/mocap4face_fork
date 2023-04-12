@@ -21,7 +21,30 @@ const statusElement = document.getElementById('status')!
 const fpsElement = document.getElementById('fps')
 const fallbackVideo = videoElement.currentSrc
 
+function downloadCSV(data: Array<Array<string | number>>) {
+    const csvContent = data.map((row) => row.join(",")).join("\n");
+    const csvBlob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(csvBlob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "blendshape_data.csv");
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+  
+
+let recording = false;
+let frameCount = 0;
+let blendshapeData: Array<Array<string | number>> = [];
+const recordButton = document.getElementById("record") as HTMLButtonElement;
+const counterElement = document.getElementById("counter") as HTMLElement;
+
+
 function startTracking() {
+    
+
     const faceRectangleElement = document.getElementById('rectangle')
     const blendshapeSliders = new Map<String, HTMLElement>()
     const context = new ApplicationContext(window.location.href) // Set a different URL here if you host application resources elsewhere
@@ -36,32 +59,32 @@ function startTracking() {
 
     // Initialize
     const asyncTracker = FaceTracker.createVideoTracker(fs)
-        .then((tracker) => {
-            console.log('Started tracking')
+    .then((tracker) => {
+        console.log('Started tracking')
 
-            // Collect all blendshape names and prepare UI
-            const blendshapeNames = tracker.blendshapeNames
-                .toArray()
-                .concat(faceRotationToBlendshapes(Quaternion.createWithFloat(0, 0, 0, 1)).map((e) => e[0]))
-                .sort()
+        // Collect all blendshape names and prepare UI
+        const blendshapeNames = tracker.blendshapeNames
+            .toArray()
+            .concat(faceRotationToBlendshapes(Quaternion.createWithFloat(0, 0, 0, 1)).map((e) => e[0]))
+            .sort()
 
-            hideLoading()
-            contentElement.replaceChildren() // remove dummy loading elements
-            for (const blendshape of blendshapeNames) {
-                const [li, div] = createBlendshapeElement(blendshape)
-                contentElement.appendChild(li)
-                blendshapeSliders.set(blendshape, div)
-            }
+        hideLoading()
+        contentElement.replaceChildren() // remove dummy loading elements
+        for (const blendshape of blendshapeNames) {
+            const [li, div] = createBlendshapeElement(blendshape)
+            contentElement.appendChild(li)
+            blendshapeSliders.set(blendshape, div)
+        }
 
-            requestAnimationFrame(track)
-            return tracker
-        })
-        .logError('Could not start tracking')
-
-    // Show webcam button after tracker loads and when webcam is available
-    Promise.all([webcamAvailable, asyncTracker.promise()]).then(() => {
-        webcamOverlay.classList.remove('hidden')
+        requestAnimationFrame(track)
+        return tracker
     })
+    .logError('Could not start tracking')
+
+// Show webcam button after tracker loads and when webcam is available
+Promise.all([webcamAvailable, asyncTracker.promise()]).then(() => {
+    webcamOverlay.classList.remove('hidden')
+})
 
     /**
      * Shows or hides rectangle around the detected face
@@ -114,6 +137,18 @@ function startTracking() {
         // }
 
         // Update UI
+
+        if (recording) {
+            const rowData = [frameCount];
+            for (const [name, value] of lastResult.blendshapes) {
+              rowData.push(name, value);
+            }
+            blendshapeData.push(rowData);
+            frameCount++;
+            counterElement.textContent = frameCount.toString();
+          }
+
+          
         for (const [name, value] of lastResult.blendshapes) {
             updateBlendshapeValue(name, value)
         }
@@ -302,6 +337,24 @@ webcamButton.addEventListener('click', () => {
         videoElement.parentElement?.classList.add('video')
     }
 })
+
+// Handle record button
+
+recordButton.addEventListener("click", () => {
+    if (!recording) {
+      recording = true;
+      frameCount = 0;
+      blendshapeData = [];
+      recordButton.textContent = "Stop Recording";
+      counterElement.textContent = frameCount.toString();
+    } else {
+      recording = false;
+      recordButton.textContent = "Start Recording";
+      counterElement.textContent = "0";
+      downloadCSV(blendshapeData);
+    }
+  });
+  
 
 // Do not eat resources when our tab is in the background
 window.onfocus = () => {
