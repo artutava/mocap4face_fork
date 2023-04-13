@@ -140,7 +140,7 @@ Promise.all([webcamAvailable, asyncTracker.promise()]).then(() => {
 
         if (recording) {
             if(!blendshapeData.length){
-                const rowNames = []
+                const rowNames: string[] = []
                 for (const [name, value] of lastResult.blendshapes) {
                     rowNames.push(name);
                 }
