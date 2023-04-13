@@ -952,6 +952,7 @@ small {
 .extra-buttons {
   position: absolute;
   bottom: 2rem;
+  z-index: 100;
 }
 
 .record-button-round {

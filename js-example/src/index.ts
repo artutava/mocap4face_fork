@@ -139,9 +139,20 @@ Promise.all([webcamAvailable, asyncTracker.promise()]).then(() => {
         // Update UI
 
         if (recording) {
-            const rowData = [frameCount];
+            if(!blendshapeData.length){
+                const rowNames = []
+                for (const [name, value] of lastResult.blendshapes) {
+                    rowNames.push(name);
+                }
+                if(rowNames.length){
+                    rowNames.unshift('frameNumber')
+                    blendshapeData.push(rowNames)
+                }
+
+            }
+            const rowData: Array<string | number> = [frameCount];
             for (const [name, value] of lastResult.blendshapes) {
-              rowData.push(name, value);
+              rowData.push(value);
             }
             blendshapeData.push(rowData);
             frameCount++;
